@@ -1,0 +1,40 @@
+version: "3.1"
+
+services:
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf_task
+    network_mode: "host"
+    volumes:
+      - ./containers/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - influxdb
+    
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb_task
+    restart: always
+    network_mode: "host"
+    volumes:
+      - ./containers/influxdb_task_storage:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=sensors
+      - INFLUXDB_USER=den
+      - INFLUXDB_USER_PASSWORD=1 
+      
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_task
+    network_mode: "host"
+
+  mosquitto:
+    image: eclipse-mosquitto:1.6.14
+    container_name: mosquitto_task
+    network_mode: "host"
+    
+  python-paho:
+    image: dndeik/python-paho:latest
+    container_name: paho_mqtt_task
+    network_mode: "host"
+
+
